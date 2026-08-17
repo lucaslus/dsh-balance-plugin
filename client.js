@@ -55,27 +55,6 @@ window.__ModuleLoader__.load({
       whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
     }
 
-    // Inline SVG info icon (no font glyph, so it never falls back to a box).
-    // The native tooltip rides the outer HTML <span> (title): Safari/WebKit
-    // only show a bubble for HTML elements, not for a title attribute on the
-    // SVG element itself, which is why hovering produced a help cursor but no
-    // tooltip.
-    const InfoIcon = (note) => React.createElement('span', {
-      title: note,
-      'aria-label': note,
-      style: { display: 'inline-block', marginLeft: '3px', cursor: 'help', verticalAlign: '-1px', lineHeight: '0', flexShrink: '0' },
-    },
-      React.createElement('svg', {
-        width: '11', height: '11', viewBox: '0 0 16 16',
-        fill: 'none', stroke: 'currentColor', strokeWidth: '1.5',
-        style: { display: 'block', opacity: '0.6' },
-      },
-        React.createElement('circle', { cx: '8', cy: '8', r: '6.5' }),
-        React.createElement('path', { d: 'M8 7.2v4.6', strokeLinecap: 'round' }),
-        React.createElement('circle', { cx: '8', cy: '4.6', r: '0.9', fill: 'currentColor', stroke: 'none' }),
-      ),
-    )
-
     const inject = ['slots', 'locale']
 
     function apply(ctx) {
@@ -167,11 +146,13 @@ window.__ModuleLoader__.load({
           }
         }
 
-        const note = state.status === 'ok' ? refreshNote(state.data) : null
-        return React.createElement('div', { style: ROW_STYLE },
-          text,
-          note === null ? null : InfoIcon(note),
-        )
+        // Official data-freshness note renders as trailing text (no icon).
+        let displayText = text
+        if (state.status === 'ok') {
+          const note = refreshNote(state.data)
+          if (note !== null) displayText = `${text} · ${note}`
+        }
+        return React.createElement('div', { style: ROW_STYLE }, displayText)
       }
 
       ctx.slots.inject('conversation.composer.dock', () =>
