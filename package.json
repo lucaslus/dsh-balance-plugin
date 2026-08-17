@@ -1,5 +1,5 @@
 {
-  "name": "dsh-plugin-balance",
+  "name": "dsh-balance-plugin",
   "version": "1.0.0",
   "description": "Show account balance for DeepSeek / Kimi / Qwen under the composer",
   "type": "module",

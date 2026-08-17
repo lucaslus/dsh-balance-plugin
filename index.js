@@ -1,5 +1,5 @@
 /**
- * dsh-plugin-balance — node half.
+ * dsh-balance-plugin — node half.
  * A Cordis plugin that registers one HTTP route, `/dsh-balance`, which returns
  * the current provider's account balance as JSON. The browser half fetches it.
  *
@@ -9,7 +9,7 @@
  * `jv()` to stay lossless JSON.
  */
 
-export const name = 'dsh-plugin-balance'
+export const name = 'dsh-balance-plugin'
 export const inject = ['webServer']
 
 export function apply(ctx) {
@@ -235,5 +235,5 @@ export function apply(ctx) {
         res.end(JSON.stringify({ mode: 'other', provider: null, model: null, errorCode: 'request', errorDetail: message }))
       }
     },
-  }), 'dsh-plugin-balance: /dsh-balance route')
+  }), 'dsh-balance-plugin: /dsh-balance route')
 }

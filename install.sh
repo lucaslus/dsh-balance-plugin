@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Install dsh-plugin-balance into a dsh profile from GitHub.
-#   curl -fsSL https://raw.githubusercontent.com/lucaslus/dsh-plugin-balance/main/install.sh | bash
+# Install dsh-balance-plugin into a dsh profile from GitHub.
+#   curl -fsSL https://raw.githubusercontent.com/lucaslus/dsh-balance-plugin/main/install.sh | bash
 # or, with a different profile:
 #   DSH_PROFILE=web bash install.sh
 
-GITHUB_REPO="lucaslus/dsh-plugin-balance"
+GITHUB_REPO="lucaslus/dsh-balance-plugin"
 PROFILE="${DSH_PROFILE:-web}"
 
 if ! command -v dsh >/dev/null 2>&1; then

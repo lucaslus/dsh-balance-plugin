@@ -1,4 +1,4 @@
-# dsh-plugin-balance
+# dsh-balance-plugin
 
 在 [DeepSeek Harness](https://github.com/lucaslus/deepseek-harness-desktop) 的 Web 客户端里，于输入框下方常驻显示当前模型服务商的账户余额读数。
 
@@ -13,19 +13,19 @@
 ### 一键安装（curl）
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/lucaslus/dsh-plugin-balance/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/lucaslus/dsh-balance-plugin/main/install.sh | bash
 ```
 
 默认安装到 `web` profile；指定 profile：
 
 ```sh
-DSH_PROFILE=web curl -fsSL https://raw.githubusercontent.com/lucaslus/dsh-plugin-balance/main/install.sh | bash
+DSH_PROFILE=web curl -fsSL https://raw.githubusercontent.com/lucaslus/dsh-balance-plugin/main/install.sh | bash
 ```
 
 ### 手动安装
 
 ```sh
-dsh plugin --profile web add github:lucaslus/dsh-plugin-balance
+dsh plugin --profile web add github:lucaslus/dsh-balance-plugin
 ```
 
 ## 安装后需要重启客户端
