@@ -1,4 +1,4 @@
-// dsh-plugin-balance — browser half, hand-written client bundle.
+// dsh-balance-plugin — browser half, hand-written client bundle.
 // Registered into `conversation.composer.dock` (the ambient readout line under
 // the composer card, beside the shipped stats row). Follows the
 // window.__ModuleLoader__.load protocol the shell seeds into the module table:
@@ -7,7 +7,7 @@
 // re-polled every 10s, with an immediate re-query when a provider switch is
 // detected.
 window.__ModuleLoader__.load({
-  id: 'dsh-plugin-balance',
+  id: 'dsh-balance-plugin',
   factory: (require) => {
     var module = { exports: {} }
     var exports = module.exports
@@ -56,16 +56,24 @@ window.__ModuleLoader__.load({
     }
 
     // Inline SVG info icon (no font glyph, so it never falls back to a box).
-    const InfoIcon = (note) => React.createElement('svg', {
-      width: '11', height: '11', viewBox: '0 0 16 16',
-      fill: 'none', stroke: 'currentColor', strokeWidth: '1.5',
-      style: { verticalAlign: '-1px', marginLeft: '3px', opacity: '0.6', cursor: 'help', flexShrink: '0' },
+    // The native tooltip rides the outer HTML <span> (title): Safari/WebKit
+    // only show a bubble for HTML elements, not for a title attribute on the
+    // SVG element itself, which is why hovering produced a help cursor but no
+    // tooltip.
+    const InfoIcon = (note) => React.createElement('span', {
       title: note,
       'aria-label': note,
+      style: { display: 'inline-block', marginLeft: '3px', cursor: 'help', verticalAlign: '-1px', lineHeight: '0', flexShrink: '0' },
     },
-      React.createElement('circle', { cx: '8', cy: '8', r: '6.5' }),
-      React.createElement('path', { d: 'M8 7.2v4.6', strokeLinecap: 'round' }),
-      React.createElement('circle', { cx: '8', cy: '4.6', r: '0.9', fill: 'currentColor', stroke: 'none' }),
+      React.createElement('svg', {
+        width: '11', height: '11', viewBox: '0 0 16 16',
+        fill: 'none', stroke: 'currentColor', strokeWidth: '1.5',
+        style: { display: 'block', opacity: '0.6' },
+      },
+        React.createElement('circle', { cx: '8', cy: '8', r: '6.5' }),
+        React.createElement('path', { d: 'M8 7.2v4.6', strokeLinecap: 'round' }),
+        React.createElement('circle', { cx: '8', cy: '4.6', r: '0.9', fill: 'currentColor', stroke: 'none' }),
+      ),
     )
 
     const inject = ['slots', 'locale']

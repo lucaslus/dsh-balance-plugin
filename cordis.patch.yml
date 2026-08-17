@@ -1,7 +1,7 @@
-# dsh-plugin-balance patch layer.
+# dsh-balance-plugin patch layer.
 # One row, both halves: its node half (index.js) registers the /dsh-balance
 # route; its browser half (client.js, discovered via the package's dsh.client
 # manifest) renders the readout in the composer dock.
 - insert:
     - id: balance-monitor
-      name: dsh-plugin-balance
+      name: dsh-balance-plugin
