@@ -1,83 +1,85 @@
 # dsh-balance-plugin
 
-在 [DeepSeek Harness](https://github.com/lucaslus/deepseek-harness-desktop) 的 Web 客户端里，于输入框下方常驻显示当前模型服务商的账户余额读数。
+[English](README.md) | [中文](README.zh-CN.md)
 
-- **DeepSeek**：总余额 / 充值余额 / 赠送余额 + 账户可用状态
-- **Kimi（月之暗面）**：可用余额 / 现金 / 代金券（现金为负时标注 ⚠ 欠费）
-- **Qwen（阿里云百炼）**：识别模式并提示 Token Plan 需在控制台查询（百炼 API Key 无余额查询接口）
+Shows your model provider's account balance in a persistent readout line under the composer in the [DeepSeek Harness](https://github.com/lucaslus/deepseek-harness-desktop) web client.
 
-读数行与产品自带的 stats 行（`tok/s · cache hit %`）同款字号、颜色、左对齐；行尾直接显示官方数据时效说明；中英文跟随界面语言自动切换。
+- **DeepSeek**: total / topped-up / granted balance + account availability
+- **Kimi (Moonshot)**: available / cash / voucher balance (a negative cash balance is flagged ⚠ overdue)
+- **Qwen (Alibaba Cloud Bailian)**: mode is detected with a console-only note (the Bailian API key exposes no balance endpoint)
 
-## 效果预览
+The readout matches the built-in stats line (`tok/s · cache hit %`) typography, sits on its own second line, and is left-aligned against the same content column. The official data-freshness note renders as trailing text; the UI language (zh/en) follows the client.
 
-<img src="docs/dsh-balance.png" alt="余额读数行效果" width="720">
+## Preview
 
-## 安装
+<img src="docs/dsh-balance.png" alt="Balance readout preview" width="720">
 
-### 一键安装（curl）
+## Install
+
+### One-liner (curl)
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/lucaslus/dsh-balance-plugin/main/install.sh | bash
 ```
 
-默认安装到 `web` profile；指定 profile：
+Installs into the `web` profile by default; pick a profile:
 
 ```sh
 DSH_PROFILE=web curl -fsSL https://raw.githubusercontent.com/lucaslus/dsh-balance-plugin/main/install.sh | bash
 ```
 
-### 手动安装
+### Manual
 
 ```sh
 dsh plugin --profile web add github:lucaslus/dsh-balance-plugin
 ```
 
-## 安装后需要重启客户端
+## Restart required after install
 
-本插件包含浏览器端 UI（`dsh.client`），它在 `dsh` 进程启动时被扫描进浏览器插件表；Web 的 HMR 目前处于禁用状态。因此**安装完成后需要重启客户端**才会加载读数行：
+This plugin ships a browser half (`dsh.client`), which is scanned into the browser plugin table when the `dsh` process starts; Web HMR is currently disabled. So **restart the client after installing** before the readout loads:
 
 ```sh
 dsh --profile web
 ```
 
-## 配置
+## Configuration
 
-插件自动从当前模型路由识别服务商，并沿用各模型适配器自己的凭据配置，无需重复填写：
+The plugin detects the provider from the current model route and reuses each model adapter's own credential configuration — nothing to fill in:
 
-| 平台 | API key 环境变量（默认） |
+| Provider | API key env (default) |
 |---|---|
 | DeepSeek | `DEEPSEEK_API_KEY` |
-| Kimi | `KIMI_API_KEY`（或 `MOONSHOT_API_KEY`） |
+| Kimi | `KIMI_API_KEY` (or `MOONSHOT_API_KEY`) |
 | Qwen | `DASHSCOPE_API_KEY` |
 
-如果你在设置里给模型配置了自定义的 `apiKeyEnv` 或 `baseURL`，插件会跟随该配置读取。
+If you configured a custom `apiKeyEnv` or `baseURL` for a model in settings, the plugin follows it.
 
-## 数据时效（官方口径）
+## Data freshness (official)
 
-| 平台 | 官方延迟 |
+| Provider | Official delay |
 |---|---|
-| DeepSeek | 数据最多延迟 5 分钟（GMT+8） |
-| Kimi | 可用余额、今日消费及总消费约延迟 10 分钟 |
+| DeepSeek | Data may be delayed up to 5 minutes (GMT+8) |
+| Kimi | Balance and today's consumption may be delayed ~10 minutes |
 
-读数行行尾直接显示对应说明。插件每 5 秒拉取一次余额接口，但余额数值本身受上表官方延迟约束，因此短时间内数值不变化是正常的。
+The note renders at the end of the readout line. The plugin polls the balance endpoint every 5 seconds, but the numbers themselves are subject to the official delays above, so no change within a short window is expected.
 
-## 搭配使用
+## Companion client
 
-本插件是 DeepSeek Harness 的扩展，请搭配客户端使用：
+This plugin is an extension of DeepSeek Harness — use it together with the client:
 
-- DeepSeek Harness 客户端：<https://github.com/lucaslus/deepseek-harness-desktop>
+- DeepSeek Harness client: <https://github.com/lucaslus/deepseek-harness-desktop>
 
-## 已知限制
+## Known limitations
 
-- **Qwen / 百炼 Token Plan**：百炼没有可用的 API-key 余额接口（官方查询需控制台登录），插件只做模式识别与提示。
-- **"运行期已耗"**：DeepSeek / Kimi 余额接口只返回剩余额度，不返回历史消耗；插件以本次启动后首次读到的余额为基线，差值即为运行期消耗，重启后重新计基线。
-- 余额查询依赖本机 `curl`（macOS / Linux 自带）。
+- **Qwen / Bailian Token Plan**: Bailian has no usable API-key balance endpoint (official queries require the console), so the plugin only detects the mode and shows a note.
+- **"Used this run"**: the DeepSeek / Kimi balance APIs return remaining amounts only, not historical consumption. The plugin takes the first balance read after startup as its baseline; the delta is the run's consumption, and the baseline resets on restart.
+- The balance query relies on local `curl` (bundled with macOS / Linux).
 
-## 开发
+## Development
 
-- `index.js` — node 半：注册 `/dsh-balance` HTTP 路由，查询余额并返回 JSON；`FAMILIES` 数组是扩展点，新增平台只需追加一项。
-- `client.js` — 浏览器半：手写的 `window.__ModuleLoader__.load` 客户端 bundle，渲染 `conversation.composer.dock` 读数行。
-- `cordis.patch.yml` — bundle patch 层，插入插件行。
+- `index.js` — node half: registers the `/dsh-balance` HTTP route, queries the balance, returns JSON. The `FAMILIES` array is the extension point — add a provider by appending one entry.
+- `client.js` — browser half: a hand-written `window.__ModuleLoader__.load` client bundle that renders the `conversation.composer.dock` readout.
+- `cordis.patch.yml` — the bundle patch layer inserting the plugin row.
 
 ## License
 
