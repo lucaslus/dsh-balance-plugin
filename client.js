@@ -2,10 +2,10 @@
 // Registered into `conversation.composer.dock` (the ambient readout line under
 // the composer card, beside the shipped stats row). Follows the
 // window.__ModuleLoader__.load protocol the shell seeds into the module table:
-// `react` resolves from the frozen module table (external); everything else is
-// inlined here. Data comes from the node half's `/dsh-balance` route via fetch,
-// re-polled every 10s, with an immediate re-query when a provider switch is
-// detected.
+// `react` and `@deepseek-ai/dsh-client-ui-primitives` resolve from the frozen
+// module table (externals); everything else is inlined here. Data comes from
+// the node half's `/dsh-balance` route via fetch, re-polled every 5s, with an
+// immediate re-query when a provider switch is detected.
 window.__ModuleLoader__.load({
   id: 'dsh-balance-plugin',
   factory: (require) => {
@@ -13,6 +13,7 @@ window.__ModuleLoader__.load({
     var exports = module.exports
     Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' })
     const React = require('react')
+    const { Tooltip } = require('@deepseek-ai/dsh-client-ui-primitives')
 
     const TEXTS = {
       zh: {
@@ -67,6 +68,8 @@ window.__ModuleLoader__.load({
         const [state, setState] = React.useState({ status: 'loading' })
         const prevProvider = React.useRef(null)
         const inflight = React.useRef(false)
+        const rootRef = React.useRef(null)
+        const [truncated, setTruncated] = React.useState(false)
 
         React.useEffect(() => {
           let cancelled = false
@@ -99,7 +102,7 @@ window.__ModuleLoader__.load({
           }
           refresh()
           let dispose
-          if (timerService !== undefined) dispose = timerService.interval(refresh, 10000)
+          if (timerService !== undefined) dispose = timerService.interval(refresh, 5000)
           return () => {
             cancelled = true
             if (dispose !== undefined) dispose()
@@ -152,7 +155,26 @@ window.__ModuleLoader__.load({
           const note = refreshNote(state.data)
           if (note !== null) displayText = `${text} · ${note}`
         }
-        return React.createElement('div', { style: ROW_STYLE }, displayText)
+
+        // Show the full text as the product Tooltip while the row is
+        // ellipsis-truncated — mirrors the shipped stats line behavior.
+        React.useLayoutEffect(() => {
+          const el = rootRef.current
+          if (el === null) return
+          const measure = () => setTruncated(el.scrollWidth > el.clientWidth)
+          measure()
+          if (typeof ResizeObserver === 'undefined') return undefined
+          const observer = new ResizeObserver(measure)
+          observer.observe(el)
+          return () => observer.disconnect()
+        }, [displayText])
+
+        return React.createElement(Tooltip, {
+          label: displayText,
+          side: 'top',
+          delayMs: 500,
+          disabled: !truncated,
+        }, React.createElement('div', { style: ROW_STYLE, ref: rootRef }, displayText))
       }
 
       ctx.slots.inject('conversation.composer.dock', () =>
