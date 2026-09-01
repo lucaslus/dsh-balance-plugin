@@ -28,10 +28,18 @@ curl -fsSL https://raw.githubusercontent.com/lucaslus/dsh-balance-plugin/main/in
 DSH_PROFILE=web curl -fsSL https://raw.githubusercontent.com/lucaslus/dsh-balance-plugin/main/install.sh | bash
 ```
 
+如果本机没有安装 `dsh` 命令，脚本会自动回退到 `npx --yes @deepseek-ai/dsh`（Harness CLI 已发布为 npm 包），保证插件仍能安装成功。重启客户端同样可以使用 npx 方式，以安装脚本最后输出的提示为准。
+
 ### 手动安装
 
 ```sh
 dsh plugin --profile web add github:lucaslus/dsh-balance-plugin
+```
+
+没有 `dsh`？同样的命令用 npx 运行：
+
+```sh
+npx --yes @deepseek-ai/dsh plugin --profile web add github:lucaslus/dsh-balance-plugin
 ```
 
 ## 安装后需要重启客户端

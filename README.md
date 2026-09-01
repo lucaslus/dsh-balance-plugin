@@ -28,10 +28,18 @@ Installs into the `web` profile by default; pick a profile:
 DSH_PROFILE=web curl -fsSL https://raw.githubusercontent.com/lucaslus/dsh-balance-plugin/main/install.sh | bash
 ```
 
+If the `dsh` command is not installed, the script falls back to `npx --yes @deepseek-ai/dsh` (the harness CLI is published as an npm package), so the plugin installs either way. The same fallback applies when restarting the client — see the hint the installer prints.
+
 ### Manual
 
 ```sh
 dsh plugin --profile web add github:lucaslus/dsh-balance-plugin
+```
+
+No `dsh`? Run the same command through npx:
+
+```sh
+npx --yes @deepseek-ai/dsh plugin --profile web add github:lucaslus/dsh-balance-plugin
 ```
 
 ## Restart required after install
